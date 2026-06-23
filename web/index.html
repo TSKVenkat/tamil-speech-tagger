@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tamil Speech Tagger · Saaras-inspired</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>🎙️ Tamil Speech → Transcript + Emotion/Style</h1>
+      <p class="sub">ASR (fine-tuned Whisper) + prosody-based emotion &amp; speaking-style tagging →
+        dubbing-ready annotations. <span class="muted">Emotion is a heuristic estimate.</span></p>
+    </header>
+
+    <section class="card">
+      <div class="controls">
+        <button id="recBtn" class="btn primary">● Record</button>
+        <span class="or">or</span>
+        <label class="btn">Upload audio<input id="fileIn" type="file" accept="audio/*" hidden /></label>
+        <span id="status" class="status"></span>
+      </div>
+      <audio id="player" controls hidden></audio>
+    </section>
+
+    <section id="results" class="card" hidden>
+      <h2>Transcript</h2>
+      <p id="transcript" class="tamil"></p>
+      <div id="tags" class="tags"></div>
+      <details>
+        <summary>Full annotation (JSON)</summary>
+        <pre id="json"></pre>
+      </details>
+    </section>
+
+    <footer>
+      <p class="muted">Powered by a Hugging Face Space · set your Space ID in <code>app.js</code></p>
+    </footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+:root {
+  --bg: #0f1117; --card: #1a1d27; --line: #2a2e3a;
+  --text: #e8eaf0; --muted: #8b90a0; --accent: #6c5ce7;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: -apple-system, "Segoe UI", "Noto Sans Tamil", system-ui, sans-serif;
+  line-height: 1.55;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+header h1 { font-size: 1.8rem; margin: 0 0 8px; }
+.sub { color: var(--muted); margin: 0 0 24px; }
+.muted { color: var(--muted); }
+.card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; padding: 22px; margin-bottom: 20px;
+}
+.controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.btn {
+  display: inline-block; cursor: pointer; border: 1px solid var(--line);
+  background: #232735; color: var(--text); padding: 10px 18px;
+  border-radius: 10px; font-size: .95rem; font-weight: 600;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); }
+.btn.recording { background: #e74c3c; border-color: #e74c3c; }
+.or { color: var(--muted); }
+.status { color: var(--muted); font-size: .9rem; }
+#player { width: 100%; margin-top: 16px; }
+.tamil { font-size: 1.3rem; line-height: 1.7; }
+.tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.tag {
+  padding: 6px 14px; border-radius: 16px; font-weight: 600; font-size: .9rem;
+  background: #232735; border: 1px solid var(--line);
+}
+.tag.emotion { color: #fff; }
+pre {
+  background: #11131b; border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px; overflow-x: auto; font-size: .82rem; white-space: pre-wrap;
+}
+details summary { cursor: pointer; color: var(--accent); margin-top: 8px; }
+footer { margin-top: 30px; text-align: center; font-size: .85rem; }
