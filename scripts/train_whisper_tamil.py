@@ -166,8 +166,12 @@ def main():
     # Speaker-independent eval for Common Voice
     if has_speaker:
         train_spk = set(train.unique("client_id"))
-        test = test.filter(lambda x: x["client_id"] not in train_spk)
-        print("speaker-independent test rows:", len(test))
+        spk_test = test.filter(lambda x: x["client_id"] not in train_spk)
+        if len(spk_test) > 0:
+            test = spk_test
+            print("speaker-independent test rows:", len(test))
+        else:
+            print("warning: speaker-independent filter emptied eval set; keeping random split")
 
     train = train.shuffle(seed=42)
     if args.max_train_samples:
