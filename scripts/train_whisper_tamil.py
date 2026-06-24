@@ -178,6 +178,7 @@ def main():
         train = train.select(range(min(args.max_train_samples, len(train))))
     if args.max_eval_samples:
         test = test.select(range(min(args.max_eval_samples, len(test))))
+    assert len(test) > 0, f"EVAL SET IS EMPTY (len={len(test)}); check speaker filter or dataset split!"
     print("using", len(train), "train /", len(test), "test")
 
     # Processor + feature extraction
