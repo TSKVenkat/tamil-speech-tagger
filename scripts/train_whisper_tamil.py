@@ -84,6 +84,7 @@ def parse_args():
 @dataclass
 class DataCollatorSpeechSeq2SeqWithPadding:
     processor: Any
+    decoder_start_token_id: int
 
     def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]):
         input_features = [{"input_features": f["input_features"]} for f in features]
@@ -91,7 +92,7 @@ class DataCollatorSpeechSeq2SeqWithPadding:
         label_features = [{"input_ids": f["labels"]} for f in features]
         labels_batch = self.processor.tokenizer.pad(label_features, return_tensors="pt")
         labels = labels_batch["input_ids"].masked_fill(labels_batch.attention_mask.ne(1), -100)
-        if (labels[:, 0] == self.processor.tokenizer.bos_token_id).all().cpu().item():
+        if (labels[:, 0] == self.decoder_start_token_id).all().cpu().item():
             labels = labels[:, 1:]
         batch["labels"] = labels
         return batch
@@ -183,7 +184,9 @@ def main():
     test = test.filter(lambda x: len(x["labels"]) <= MAX_LABEL_LENGTH)
     print("after length filter:", len(train), "train /", len(test), "test")
 
-    data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor)
+    data_collator = DataCollatorSpeechSeq2SeqWithPadding(
+        processor, decoder_start_token_id=model.config.decoder_start_token_id
+    )
 
     # Metrics
     wer_metric = evaluate.load("wer")
@@ -246,7 +249,7 @@ def main():
         eval_dataset=test,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
-        processing_class=processor,
+        processing_class=processor.feature_extractor,
     )
 
     # Train
