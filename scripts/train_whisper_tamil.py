@@ -101,10 +101,25 @@ class DataCollatorSpeechSeq2SeqWithPadding:
 def main():
     args = parse_args()
 
-    # HF login (token env var / prompt)
-    hf_token = args.hf_token
+    # HF login (env var / Colab secret / Kaggle secret / prompt)
+    hf_token = args.hf_token or os.environ.get("HF_TOKEN")
+    if not hf_token:
+        try:
+            from google.colab import userdata
+
+            hf_token = userdata.get("HF_TOKEN") or None
+        except Exception:
+            pass
+    if not hf_token:
+        try:
+            from kaggle_secrets import UserSecretsClient
+
+            hf_token = UserSecretsClient().get_secret("HF_TOKEN") or None
+        except Exception:
+            pass
     if not hf_token:
         from getpass import getpass
+
         hf_token = getpass("HF write token (or set HF_TOKEN env var): ")
     login(token=hf_token)
 
