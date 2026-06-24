@@ -42,9 +42,16 @@ class TamilSpeechPipeline:
     def _load_audio(self, audio) -> tuple[np.ndarray, int]:
         """Accept a filepath, or a (sr, ndarray)/(ndarray, sr) tuple (Gradio)."""
         if isinstance(audio, str):
-            import soundfile as sf
+            try:
+                import soundfile as sf
 
-            y, sr = sf.read(audio, dtype="float32")
+                y, sr = sf.read(audio, dtype="float32")
+            except Exception:
+                # soundfile can't decode webm/opus/mp3 (e.g. browser mic recordings);
+                # fall back to librosa (uses ffmpeg/audioread) and return mono.
+                import librosa
+
+                y, sr = librosa.load(audio, sr=None, mono=True)
             return y, sr
         if isinstance(audio, tuple) and len(audio) == 2:
             a, b = audio

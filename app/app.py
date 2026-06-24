@@ -56,17 +56,17 @@ def analyze(audio):
     return transcript, style_md, out, json.dumps(out, ensure_ascii=False, indent=2)
 
 
-with gr.Blocks(title="Tamil Speech Tagger", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="Kural") as demo:
     gr.Markdown(
-        "# 🎙️ Tamil Speech → Transcript + Emotion/Style\n"
-        "Saaras-inspired pipeline: **ASR** (fine-tuned Whisper) + prosody-based "
-        "**emotion & speaking-style** tagging → dubbing-ready annotations.\n\n"
+        "# 🎙️ Kural — Tamil Speech → Transcript + Emotion/Style\n"
+        "**ASR** (fine-tuned Whisper) + prosody-based **emotion & speaking-style** "
+        "tagging → dubbing-ready annotations.\n\n"
         f"_Model: `{MODEL_ID}` · emotion tags are heuristic (prosody-derived)._"
     )
     with gr.Row():
         with gr.Column():
             audio_in = gr.Audio(sources=["microphone", "upload"], type="filepath",
-                                label="Tamil audio")
+                                format="wav", label="Tamil audio (record or upload)")
             btn = gr.Button("Analyze", variant="primary")
         with gr.Column():
             txt = gr.Textbox(label="Transcript (தமிழ்)", lines=3)
@@ -79,4 +79,4 @@ with gr.Blocks(title="Tamil Speech Tagger", theme=gr.themes.Soft()) as demo:
                             outputs=[txt, style_out, json_view, raw])
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(theme=gr.themes.Soft())

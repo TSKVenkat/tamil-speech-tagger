@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kural · Tamil Speech</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main>
+    <h1>🎙️ Kural</h1>
+    <p class="sub">Tamil speech → transcript + emotion &amp; speaking-style tags</p>
+
+    <div class="card">
+      <div class="row">
+        <button id="rec" class="btn primary">● Record</button>
+        <span class="or">or</span>
+        <label class="btn">Upload<input id="file" type="file" accept="audio/*" hidden /></label>
+      </div>
+      <audio id="player" controls hidden></audio>
+      <div id="status" class="status"></div>
+    </div>
+
+    <div id="result" class="card" hidden>
+      <div class="label">Transcript</div>
+      <p id="transcript" class="tamil"></p>
+      <div id="tags" class="tags"></div>
+      <div id="meta" class="meta"></div>
+      <details>
+        <summary>Full JSON</summary>
+        <pre id="json"></pre>
+      </details>
+    </div>
+
+    <footer>CPU · faster-whisper · model <code>Venky0411/whisper-small-ta-saaras</code></footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
