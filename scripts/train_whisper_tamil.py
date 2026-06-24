@@ -184,6 +184,14 @@ def main():
     test = test.filter(lambda x: len(x["labels"]) <= MAX_LABEL_LENGTH)
     print("after length filter:", len(train), "train /", len(test), "test")
 
+    # Model (load before data collator so decoder_start_token_id is available)
+    model = WhisperForConditionalGeneration.from_pretrained(args.model_name)
+    model.generation_config.language = args.language
+    model.generation_config.task = "transcribe"
+    model.generation_config.forced_decoder_ids = None
+    model.config.forced_decoder_ids = None
+    model.config.suppress_tokens = []
+
     data_collator = DataCollatorSpeechSeq2SeqWithPadding(
         processor, decoder_start_token_id=model.config.decoder_start_token_id
     )
@@ -207,14 +215,6 @@ def main():
             "wer": 100 * wer_metric.compute(predictions=pred_str, references=label_str),
             "cer": 100 * cer_metric.compute(predictions=pred_str, references=label_str),
         }
-
-    # Model
-    model = WhisperForConditionalGeneration.from_pretrained(args.model_name)
-    model.generation_config.language = args.language
-    model.generation_config.task = "transcribe"
-    model.generation_config.forced_decoder_ids = None
-    model.config.forced_decoder_ids = None
-    model.config.suppress_tokens = []
 
     # Trainer
     training_args = Seq2SeqTrainingArguments(
