@@ -213,7 +213,7 @@ def main():
 
     # Metrics
     wer_metric = evaluate.load("wer")
-    cer_metric = evaluate.load("cer")
+    import jiwer
 
     def compute_metrics(pred):
         pred_ids = pred.predictions
@@ -228,7 +228,7 @@ def main():
         )
         return {
             "wer": 100 * wer_metric.compute(predictions=pred_str, references=label_str),
-            "cer": 100 * cer_metric.compute(predictions=pred_str, references=label_str),
+            "cer": 100 * jiwer.cer(label_str, pred_str),
         }
 
     # Trainer
@@ -251,7 +251,7 @@ def main():
         report_to=["none"],
         remove_unused_columns=False,  # REQUIRED: dataset only has input_features + labels
         load_best_model_at_end=True,
-        metric_for_best_model="cer",
+        metric_for_best_model="wer",
         greater_is_better=False,
         push_to_hub=not args.no_push_to_hub,
         hub_model_id=args.hub_repo,
