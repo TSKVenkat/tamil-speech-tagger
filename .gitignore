@@ -6,5 +6,7 @@ venv/
 whisper-ta/
 *.wav
 *.mp3
+TamilSER-DB/
+*.zip
 .DS_Store
 .ipynb_checkpoints/
