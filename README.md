@@ -22,7 +22,8 @@ Example output:
 
 ## Models
 
-Fine-tuned `openai/whisper-small` on Common Voice Tamil
+### ASR — fine-tuned `openai/whisper-small` on Common Voice Tamil
+
 ([`abar-uwc/tamil-common-voice_v21`](https://huggingface.co/datasets/abar-uwc/tamil-common-voice_v21),
 a Parquet mirror — the Mozilla HF datasets were retired in Oct 2025):
 
@@ -30,6 +31,19 @@ a Parquet mirror — the Mozilla HF datasets were retired in Oct 2025):
 |-------|------|------|
 | [`Venky0411/whisper-small-ta-saaras-v2`](https://huggingface.co/Venky0411/whisper-small-ta-saaras-v2) **(current)** | 35.5 | 5.9 |
 | [`Venky0411/whisper-small-ta-saaras`](https://huggingface.co/Venky0411/whisper-small-ta-saaras) (initial run) | 58.1 | 19.5 |
+
+### SER — emotion (frozen Whisper encoder + attention pooling + classifier)
+
+Speaker-independent test, same architecture both rows — only the language differs:
+
+| Data | Acc | Macro-F1 |
+|------|-----|----------|
+| **English** (CREMA-D, 91 actors) | **0.872** | **0.872** |
+| **Tamil** (EmoTa, 22 speakers) | 0.380 | 0.302 |
+
+**Key finding:** the design is sound (0.87 on English); the Tamil gap is the **language** —
+Whisper's *frozen* features barely model Tamil. Fix = swap the frozen backbone to a
+Tamil-aware SSL model (XLS-R / IndicWav2Vec). Full write-up in [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
 
 ## Layout
 
@@ -76,17 +90,17 @@ Secret / env var / prompt — never hard-coded.
 
 ## Notes & honesty
 
-- **ASR** is genuinely fine-tuned. **Emotion** has two implementations: the live
-  `serve/` app uses a transparent **prosody heuristic** (a weak label), while
-  `notebooks/train_emotion_whisper_colab.ipynb` trains a real **5-class classifier**
-  (`angry, fear, happy, neutral, sad`) on a frozen Whisper encoder + head. Since large
-  Tamil emotion data is scarce/gated (EmoTa needs approval), it aggregates public
-  ungated sets — English acted (RAVDESS, CREMA-D, TESS) for volume — and **fine-tunes +
-  tests on small public Tamil sets** for an honest Tamil score. Cross-lingual acoustic
-  transfer is imperfect; the Tamil test report makes the real number explicit.
-- Common Voice is **read speech** → note generalization to spontaneous/dubbing.
-- Speaker-independent eval (`client_id` grouping) avoids speaker leakage.
-- License: Common Voice is CC0; please cite Mozilla.
+- **ASR** is genuinely fine-tuned (full fine-tune). **Emotion (SER)** is a real trained
+  classifier — frozen encoder + learnable **attention pooling** + linear head, trained
+  only on the head — evaluated **speaker-independent** (held-out speakers/actors). All
+  numbers above are honest held-out scores, not random splits.
+- The live `serve/` app still uses a transparent **prosody heuristic** for emotion (a weak
+  label); wiring in the trained SER model is the next integration step.
+- Whisper is the right backbone for **ASR**, but the wrong *frozen* feature extractor for
+  **Tamil** emotion (it barely models Tamil) — see the SER finding above.
+- Common Voice is **read speech**; EmoTa is **acted** → note generalization to spontaneous/dubbing.
+- Datasets: Common Voice is CC0 (cite Mozilla); **EmoTa is gated** (approval) and is *not*
+  committed to this repo.
 
 ```
 @misc{commonvoice, title={Common Voice}, author={Mozilla Foundation}, howpublished={https://commonvoice.mozilla.org}}
